@@ -1,0 +1,2 @@
+INSTANCE_TEMPLATE_ID = <id of instance template for additional nodes>
+SECURITY_GROUP_IDS = [<ids of security groups for additional nodes>]

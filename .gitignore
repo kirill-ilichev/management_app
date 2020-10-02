@@ -1,0 +1,9 @@
+.vagrant
+.idea
+.venv
+*.pyc
+local.py
+*.log
+__pycache__
+.env
+venv/
