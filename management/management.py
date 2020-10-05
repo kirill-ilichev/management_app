@@ -48,20 +48,20 @@ def create_additional_node(ec2_connection, cw_connection):
     )
     new_node_instance_id = new_node.instances[0].id
     new_instance = None
-    start_time = time.clock()
-    while time.clock() - start_time < 10:
-        # wait until new_node_instance_id would accessible
-        try:
-            new_instance = ec2_connection.get_all_instances(
-                [new_node_instance_id]
-            )[0].instances[0]
-            break
-        except EC2ResponseError:
-            continue
-    # If dont get new instance end trying
-    if not new_instance:
-        return None
     while True:
+        start_time = time.clock()
+        while time.clock() - start_time < 10:
+            # wait until new_node_instance_id would accessible
+            try:
+                new_instance = ec2_connection.get_all_instances(
+                    [new_node_instance_id]
+                )[0].instances[0]
+                break
+            except EC2ResponseError:
+                continue
+        # If dont get new instance end trying
+        if not new_instance:
+            return None
         # waiting for instance
         if new_instance.state != 'running':
             time.sleep(1)
