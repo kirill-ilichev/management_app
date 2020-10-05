@@ -22,7 +22,7 @@ def get_upstream_ips():
     """
     nginx_conf = load(open(NGINX_CONFIG_PATH))
     upstream_conf = [elem for elem in nginx_conf if elem[0][0] == 'upstream'][0]
-    upstream_ips = [elem[1] for elem in upstream_conf[1]]
+    upstream_ips = [elem[1] for elem in upstream_conf[1][1:]]
     return upstream_ips
 
 
