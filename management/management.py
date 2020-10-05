@@ -3,7 +3,6 @@ import time
 
 from boto.ec2.cloudwatch import MetricAlarm
 from boto.exception import EC2ResponseError
-
 from compat import get_connection
 from local import INSTANCE_TEMPLATE_ID, SECURITY_GROUP_IDS, NGINX_CONFIG_PATH
 from nginxparser import load, dump
@@ -48,16 +47,21 @@ def create_additional_node(ec2_connection, cw_connection):
 
     )
     new_node_instance_id = new_node.instances[0].id
+    new_instance = None
+    start_time = time.clock()
+    while time.clock() - start_time < 10:
+        # wait until new_node_instance_id would accessible
+        try:
+            new_instance = ec2_connection.get_all_instances(
+                [new_node_instance_id]
+            )[0].instances[0]
+            break
+        except EC2ResponseError:
+            continue
+    # If dont get new instance end trying
+    if not new_instance:
+        return None
     while True:
-        while True:
-            # wait until new_node_instance_id would accessible
-            try:
-                new_instance = ec2_connection.get_all_instances(
-                    [new_node_instance_id]
-                )[0].instances[0]
-                break
-            except EC2ResponseError:
-                continue
         # waiting for instance
         if new_instance.state != 'running':
             time.sleep(1)
@@ -152,6 +156,8 @@ def management():
     new_elastic_ips = []
     for _ in range(count_of_alarms_with_alarm_status):
         elastic_ip = create_additional_node(ec2_connection, cw_connection)
+        if not elastic_ip:
+            continue
         new_elastic_ips.append(elastic_ip)
 
     additional_nodes = [node for node in nodes
