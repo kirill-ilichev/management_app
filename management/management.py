@@ -4,10 +4,8 @@ import time
 from boto.ec2.cloudwatch import MetricAlarm
 
 from compat import get_connection
-from local import INSTANCE_TEMPLATE_ID, SECURITY_GROUP_IDS
+from local import INSTANCE_TEMPLATE_ID, SECURITY_GROUP_IDS, NGINX_CONFIG_PATH
 from nginxparser import load, dump
-
-NGINX_CONFIG_PATH = "nginx/load_balancer.conf"
 
 
 def get_aws_access():

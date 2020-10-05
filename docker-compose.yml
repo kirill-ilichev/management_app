@@ -12,8 +12,8 @@ services:
       - 8080
 
   nginx:
-    build: ./nginx
+    build: nginx
     container_name: nginx
     restart: always
     ports:
-      - "81:80"
+      - "80:80"
