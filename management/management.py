@@ -2,6 +2,7 @@ import os
 import time
 
 from boto.ec2.cloudwatch import MetricAlarm
+from boto.exception import EC2ResponseError
 
 from compat import get_connection
 from local import INSTANCE_TEMPLATE_ID, SECURITY_GROUP_IDS, NGINX_CONFIG_PATH
@@ -48,9 +49,15 @@ def create_additional_node(ec2_connection, cw_connection):
     )
     new_node_instance_id = new_node.instances[0].id
     while True:
-        new_instance = ec2_connection.get_all_instances(
-            [new_node_instance_id]
-        )[0].instances[0]
+        while True:
+            # wait until new_node_instance_id would accessible
+            try:
+                new_instance = ec2_connection.get_all_instances(
+                    [new_node_instance_id]
+                )[0].instances[0]
+                break
+            except EC2ResponseError:
+                continue
         # waiting for instance
         if new_instance.state != 'running':
             time.sleep(1)
