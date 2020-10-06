@@ -51,7 +51,7 @@ def create_additional_node(ec2_connection, cw_connection):
     while True:
         start_time = time.clock()
         while time.clock() - start_time < 10:
-            # wait until new_node_instance_id would accessible
+            # wait until new_node_instance_id would be accessible
             try:
                 new_instance = ec2_connection.get_all_instances(
                     [new_node_instance_id]
@@ -109,7 +109,7 @@ def add_ips_to_nginx_upstream_conf(ips):
     nginx_conf = load(open(NGINX_CONFIG_PATH))
     upstream_line_idx = get_upstream_line_idx(nginx_conf)
     for ip in ips:
-        nginx_conf[upstream_line_idx][1].append(["server", ip])
+        nginx_conf[upstream_line_idx][1].insert(1, ["server", ip])
 
     dump(nginx_conf, open(NGINX_CONFIG_PATH, "w"))
 
